@@ -37,9 +37,10 @@ RETARDO_ANIMACION_SNIPER = 5 # updates que durará cada imagen del personaje
                              # debería de ser un valor distinto para cada postura
 # El Sniper camina un poco más lento que el jugador, y salta menos
 
-GRAVEDAD = 0.0003 # Píxeles / ms2
+GRAVEDAD = 0.0006 # Píxeles / ms2
 
 # -------------------------------------------------
+
 # -------------------------------------------------
 # Funciones auxiliares
 # -------------------------------------------------
@@ -104,7 +105,7 @@ class Personaje(MiSprite):
 
         # Primero invocamos al constructor de la clase padre
         MiSprite.__init__(self);
-
+        self.unSaltoSolo=0
         # Se carga la hoja
         self.hoja = GestorRecursos.CargarImagen(archivoImagen, -1)
 
@@ -151,12 +152,14 @@ class Personaje(MiSprite):
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
         if movimiento == ARRIBA:
+
             # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
             if self.numPostura == SPRITE_SALTANDO:
-                self.movimiento = QUIETO
+                    self.movimiento = self.unSaltoSolo
             else:
-                self.movimiento = ARRIBA
+                    self.movimiento = ARRIBA
         else:
+            self.unSaltoSolo=movimiento
             self.movimiento = movimiento
 
 
@@ -186,7 +189,7 @@ class Personaje(MiSprite):
         # Las velocidades a las que iba hasta este momento
         (velocidadx, velocidady) = self.velocidad
 
-        # Si vamos a la izquierda o a la derecha        
+        # Si vamos a la izquierda o a la derecha
         if (self.movimiento == IZQUIERDA) or (self.movimiento == DERECHA):
             # Esta mirando hacia ese lado
             self.mirando = self.movimiento
@@ -237,6 +240,7 @@ class Personaje(MiSprite):
                 self.establecerPosicion((self.posicion[0], plataforma.posicion[1]-plataforma.rect.height+1))
                 # Lo ponemos como quieto
                 self.numPostura = SPRITE_QUIETO
+
                 # Y estará quieto en el eje y
                 velocidady = 0
 
@@ -247,13 +251,13 @@ class Personaje(MiSprite):
         # Actualizamos la imagen a mostrar
         self.actualizarPostura()
 
-        # Aplicamos la velocidad en cada eje      
+        # Aplicamos la velocidad en cada eje
         self.velocidad = (velocidadx, velocidady)
 
         # Y llamamos al método de la superclase para que, según la velocidad y el tiempo
         #  calcule la nueva posición del Sprite
         MiSprite.update(self, tiempo)
-        
+
         return
 
 
@@ -328,4 +332,3 @@ class Sniper(NoJugador):
         # Si este personaje no esta en pantalla, no hara nada
         else:
             Personaje.mover(self,QUIETO)
-
