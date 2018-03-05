@@ -279,7 +279,6 @@ class Jugador(Personaje):
         if teclasPulsadas[disparo]:
             p=Proyectil(self.direcbala)
             p.establecerPosicion((self.posicion[0],self.posicion[1]))
-            print self.unSaltoSolo
             p.scroll=self.scroll
             #p.posicion=self.posicion
             self.grupoProyectiles.add(p)#Personaje.mover(self,ARRIBA)
@@ -351,9 +350,9 @@ class Proyectil(Personaje):
     "El proyectil del enemigo"
     def __init__(self,direccion):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        Personaje.__init__(self,'Sniper.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+        Personaje.__init__(self,'disparo.png','coordSniper.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
         self.direcc=direccion
-
+        self.vida=1
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
     def mover_cpu(self, jugador1, jugador2):

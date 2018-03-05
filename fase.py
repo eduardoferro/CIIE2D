@@ -207,14 +207,24 @@ class Fase:
         # Comprobamos si hay colision entre algun jugador y algun enemigo
         # Se comprueba la colision entre ambos grupos
         # Si la hay, indicamos que se ha finalizado la fase
-        if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False)!={}:
-            return True
-        if pygame.sprite.groupcollide(self.grupoEnemigos, self.grupoProyectiles, False, False)!={}:
-            print "COLISION" ,self.jugador2.vida
+        #if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False)!={}:
+            #return True
+        coll=pygame.sprite.groupcollide(self.grupoEnemigos, self.grupoProyectiles, False, False)
+        if coll!={}:
+            for cosa in coll:
+                cosa.vida-=1
+                print "IMPACTO" , cosa
+                if cosa.vida<=0 :
+                    cosa.kill()
             self.jugador2.vida-=1
-            if self.jugador2.vida<0 :
-                return True
-
+            #if self.jugador2.vida<0 :
+            #    return True
+        coll=pygame.sprite.groupcollide( self.grupoProyectiles,self.grupoEnemigos, False, False)
+        if coll!={}:
+            for cosa in coll:
+                cosa.vida-=1
+                if cosa.vida<=0 :
+                    cosa.kill()
         # Actualizamos el scroll
         self.actualizarScroll(self.jugador1, self.jugador2)
 
