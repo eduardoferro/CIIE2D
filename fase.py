@@ -43,8 +43,9 @@ class Fase:
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
 
         # Creamos los sprites de los jugadores
-        self.jugador1 = Jugador()
-        self.jugador2 = Jugador()
+        self.grupoProyectiles = pygame.sprite.Group()
+        self.jugador1 = Jugador(self.grupoProyectiles)
+        self.jugador2 = Jugador(self.grupoProyectiles)
         self.grupoJugadores = pygame.sprite.Group( self.jugador1, self.jugador2 )
 
         # Ponemos a los jugadores en sus posiciones iniciales
@@ -55,7 +56,7 @@ class Fase:
         # La plataforma que conforma todo el suelo
         plataformaSuelo = Plataforma(pygame.Rect(0, 550, 1200, 15))
         # La plataforma del techo del edificio
-        plataformaCasa = Plataforma(pygame.Rect(870, 417, 200, 10))
+        plataformaCasa = Plataforma(pygame.Rect(870, 417, 199.9, 10))
         # y el grupo con las mismas
         self.grupoPlataformas = pygame.sprite.Group( plataformaSuelo, plataformaCasa )
 
@@ -71,7 +72,7 @@ class Fase:
         self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1, self.jugador2, enemigo1 )
         # Creamos otro grupo con todos los Sprites
         self.grupoSprites = pygame.sprite.Group( self.jugador1, self.jugador2, enemigo1, plataformaSuelo, plataformaCasa )
-
+        self.jugador1.setgrupproy(self.grupoSpritesDinamicos,self.grupoSprites)
 
 
 
@@ -80,9 +81,9 @@ class Fase:
         # Si ambos jugadores se han ido por ambos lados de los dos bordes
         if (jugadorIzq.rect.left<MINIMO_X_JUGADOR) and (jugadorDcha.rect.right>MAXIMO_X_JUGADOR):
 
-            # Colocamos al jugador que esté a la izquierda a la izquierda de todo
+            # ocamos al jugador que esté a la izquierda a la izquierda de todo
             jugadorIzq.establecerPosicion((self.scrollx+MINIMO_X_JUGADOR, jugadorIzq.posicion[1]))
-            # Colocamos al jugador que esté a la derecha a la derecha de todo
+            # ocamos al jugador que esté a la derecha a la derecha de todo
             jugadorDcha.establecerPosicion((self.scrollx+MAXIMO_X_JUGADOR-jugadorDcha.rect.width, jugadorDcha.posicion[1]))
 
             return False; # No se ha actualizado el scroll
@@ -185,6 +186,8 @@ class Fase:
         # Primero, se indican las acciones que van a hacer los enemigos segun como esten los jugadores
         for enemigo in iter(self.grupoEnemigos):
             enemigo.mover_cpu(self.jugador1, self.jugador2)
+        for bala in iter(self.grupoProyectiles):
+            bala.mover_cpu(self.jugador1,self.jugador2)
         # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA
         # En el caso de los jugadores, esto ya se ha realizado
 
@@ -206,6 +209,11 @@ class Fase:
         # Si la hay, indicamos que se ha finalizado la fase
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False)!={}:
             return True
+        if pygame.sprite.groupcollide(self.grupoEnemigos, self.grupoProyectiles, False, False)!={}:
+            print "COLISION" ,self.jugador2.vida
+            self.jugador2.vida-=1
+            if self.jugador2.vida<0 :
+                return True
 
         # Actualizamos el scroll
         self.actualizarScroll(self.jugador1, self.jugador2)
@@ -236,8 +244,8 @@ class Fase:
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()
-        self.jugador1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
-        self.jugador2.mover(teclasPulsadas, K_w,  K_s,    K_a,    K_d)
+        self.jugador1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_c)
+        self.jugador2.mover(teclasPulsadas, K_w,  K_s,    K_a,    K_d,K_e)
         # No se sale del programa
         return False
 

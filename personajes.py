@@ -106,6 +106,7 @@ class Personaje(MiSprite):
         # Primero invocamos al constructor de la clase padre
         MiSprite.__init__(self);
         self.unSaltoSolo=0
+        self.direcbala=DERECHA
         # Se carga la hoja
         self.hoja = GestorRecursos.CargarImagen(archivoImagen, -1)
 
@@ -159,6 +160,8 @@ class Personaje(MiSprite):
             else:
                     self.movimiento = ARRIBA
         else:
+            if movimiento !=0 :
+                self.direcbala=movimiento
             self.unSaltoSolo=movimiento
             self.movimiento = movimiento
 
@@ -167,8 +170,7 @@ class Personaje(MiSprite):
         self.retardoMovimiento -= 1
         # Miramos si ha pasado el retardo para dibujar una nueva postura
         if (self.retardoMovimiento < 0):
-            self.retardoMovimiento = self.retardoAnimacion
-            # Si ha pasado, actualizamos la postura
+            self.retardoMovimiento = self.retardoAnimacion#actualizamos la postura
             self.numImagenPostura += 1
             if self.numImagenPostura >= len(self.coordenadasHoja[self.numPostura]):
                 self.numImagenPostura = 0;
@@ -267,14 +269,23 @@ class Personaje(MiSprite):
 
 class Jugador(Personaje):
     "Cualquier personaje del juego"
-    def __init__(self):
+    def __init__(self,grupoproy):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         Personaje.__init__(self,'Jugador.png','coordJugador.txt', [6, 12, 6], VELOCIDAD_JUGADOR, VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR);
-
-
-    def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha):
+        self.grupoProyectiles=grupoproy
+        self.vida=3
+    def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha,disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
-        if teclasPulsadas[arriba]:
+        if teclasPulsadas[disparo]:
+            p=Proyectil(self.direcbala)
+            p.establecerPosicion((self.posicion[0],self.posicion[1]))
+            print self.unSaltoSolo
+            p.scroll=self.scroll
+            #p.posicion=self.posicion
+            self.grupoProyectiles.add(p)#Personaje.mover(self,ARRIBA)
+            self.grupoDinam.add(p)
+            self.grupoSprites.add(p)
+        elif teclasPulsadas[arriba]:
             Personaje.mover(self,ARRIBA)
         elif teclasPulsadas[izquierda]:
             Personaje.mover(self,IZQUIERDA)
@@ -283,7 +294,9 @@ class Jugador(Personaje):
         else:
             Personaje.mover(self,QUIETO)
 
-
+    def setgrupproy(self,grupdinam,grupsprit):
+        self.grupoDinam=grupdinam
+        self.grupoSprites=grupsprit
 # -------------------------------------------------
 # Clase NoJugador
 
@@ -292,7 +305,7 @@ class NoJugador(Personaje):
     def __init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion):
         # Primero invocamos al constructor de la clase padre con los parametros pasados
         Personaje.__init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion);
-
+        self.vida=3
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
@@ -309,7 +322,7 @@ class Sniper(NoJugador):
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         NoJugador.__init__(self,'Sniper.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
-
+        self.vida=3
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
     def mover_cpu(self, jugador1, jugador2):
@@ -332,3 +345,70 @@ class Sniper(NoJugador):
         # Si este personaje no esta en pantalla, no hara nada
         else:
             Personaje.mover(self,QUIETO)
+
+
+class Proyectil(Personaje):
+    "El proyectil del enemigo"
+    def __init__(self,direccion):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        Personaje.__init__(self,'Sniper.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+        self.direcc=direccion
+
+    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
+    # La implementacion de la inteligencia segun este personaje particular
+    def mover_cpu(self, jugador1, jugador2):
+        Personaje.mover(self,self.direcc)
+
+    def update(self, grupoPlataformas, tiempo):
+
+        # Las velocidades a las que iba hasta este momento
+        (velocidadx, velocidady) = self.velocidad
+
+        # Si vamos a la izquierda o a la derecha
+        if (self.movimiento == IZQUIERDA) or (self.movimiento == DERECHA):
+            # Esta mirando hacia ese lado
+            self.mirando = self.movimiento
+
+            # Si vamos a la izquierda, le ponemos velocidad en esa dirección
+            if self.movimiento == IZQUIERDA:
+                velocidadx = -self.velocidadCarrera
+            # Si vamos a la derecha, le ponemos velocidad en esa dirección
+            else:
+                velocidadx = self.velocidadCarrera
+
+            # Si no estamos en el aire
+            if self.numPostura != SPRITE_SALTANDO:
+                # La postura actual sera estar caminando
+                self.numPostura = SPRITE_ANDANDO
+                # Ademas, si no estamos encima de ninguna plataforma, caeremos
+                if pygame.sprite.spritecollideany(self, grupoPlataformas) == None:
+                    self.numPostura = SPRITE_SALTANDO
+
+        # Si queremos saltar
+        elif self.movimiento == ARRIBA:
+            # La postura actual sera estar saltando
+            self.numPostura = SPRITE_SALTANDO
+            # Le imprimimos una velocidad en el eje y
+            velocidady = -self.velocidadSalto
+
+        # Si no se ha pulsado ninguna tecla
+        elif self.movimiento == QUIETO:
+            # Si no estamos saltando, la postura actual será estar quieto
+            if not self.numPostura == SPRITE_SALTANDO:
+                self.numPostura = SPRITE_QUIETO
+            velocidadx = 0
+
+
+
+        # Además, si estamos en el aire
+        # Actualizamos la imagen a mostrar
+        self.actualizarPostura()
+
+        # Aplicamos la velocidad en cada eje
+        self.velocidad = (velocidadx, velocidady)
+
+        # Y llamamos al método de la superclase para que, según la velocidad y el tiempo
+        #  calcule la nueva posición del Sprite
+        MiSprite.update(self, tiempo)
+
+        return
