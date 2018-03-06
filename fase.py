@@ -41,6 +41,9 @@ class Fase:
         self.scrollx = 0
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
+        self.powerup1 = PowerUp()
+        self.powerup1.establecerPosicion((500,551))
+        self.grupoPowerUps=pygame.sprite.Group(self.powerup1)
 
         # Creamos los sprites de los jugadores
         self.grupoProyectiles = pygame.sprite.Group()
@@ -71,7 +74,7 @@ class Fase:
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
         self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1, enemigo1 )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group( self.jugador1, enemigo1, plataformaSuelo, plataformaCasa )
+        self.grupoSprites = pygame.sprite.Group( self.jugador1, enemigo1, plataformaSuelo, plataformaCasa,self.powerup1 )
         self.jugador1.setgrupproy(self.grupoSpritesDinamicos,self.grupoSprites)
 
 
@@ -213,9 +216,13 @@ class Fase:
         if coll!={}:
             for cosa in coll:
                 cosa.vida-=1
-                print "IMPACTO" , cosa
+                #print "IMPACTO" , cosa
                 if cosa.vida<=0 :
                     cosa.kill()
+        coll=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoPowerUps, False, True)
+        if coll!={}:
+            print "PowerUp"
+            self.jugador1.velocidadCarrera=(self.jugador1.velocidadCarrera*2)
             # self.jugador2.vida-=1
             #if self.jugador2.vida<0 :
             #    return True

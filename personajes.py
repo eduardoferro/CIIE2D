@@ -427,3 +427,14 @@ class Proyectil(Personaje):
         MiSprite.update(self, tiempo)
 
         return
+
+
+class PowerUp(Personaje):
+    "PowerUp para el personaje"
+    def __init__(self):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        Personaje.__init__(self,'disparo.png','coordSniper.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
+    # La implementacion de la inteligencia segun este personaje particular
+    def mover_cpu(self, jugador1):
+        return
