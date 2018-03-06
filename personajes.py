@@ -308,7 +308,7 @@ class NoJugador(Personaje):
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
-    def mover_cpu(self, jugador1, jugador2):
+    def mover_cpu(self, jugador1):
         # Por defecto un enemigo no hace nada
         #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
         return
@@ -324,17 +324,17 @@ class Sniper(NoJugador):
         self.vida=3
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
-    def mover_cpu(self, jugador1, jugador2):
+    def mover_cpu(self, jugador1):
 
         # Movemos solo a los enemigos que esten en la pantalla
         if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
 
             # Por ejemplo, intentara acercarse al jugador mas cercano en el eje x
             # Miramos cual es el jugador mas cercano
-            if abs(jugador1.posicion[0]-self.posicion[0])<abs(jugador2.posicion[0]-self.posicion[0]):
-                jugadorMasCercano = jugador1
-            else:
-                jugadorMasCercano = jugador2
+            # if abs(jugador1.posicion[0]-self.posicion[0])<abs(jugador2.posicion[0]-self.posicion[0]):
+            jugadorMasCercano = jugador1
+            # else:
+            #     jugadorMasCercano = jugador2
             # Y nos movemos andando hacia el
             if jugadorMasCercano.posicion[0]<self.posicion[0]:
                 Personaje.mover(self,IZQUIERDA)
@@ -355,7 +355,7 @@ class Proyectil(Personaje):
         self.vida=1
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
-    def mover_cpu(self, jugador1, jugador2):
+    def mover_cpu(self, jugador1):
         Personaje.mover(self,self.direcc)
 
     def update(self, grupoPlataformas, tiempo):
