@@ -209,7 +209,7 @@ class Fase:
         # Si la hay, indicamos que se ha finalizado la fase
         #if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False)!={}:
             #return True
-        coll=pygame.sprite.groupcollide(self.grupoEnemigos, self.grupoProyectiles, False, False)
+        coll=pygame.sprite.groupcollide(self.grupoEnemigos, self.grupoProyectiles, False, True)
         if coll!={}:
             for cosa in coll:
                 cosa.vida-=1
@@ -219,12 +219,12 @@ class Fase:
             self.jugador2.vida-=1
             #if self.jugador2.vida<0 :
             #    return True
-        coll=pygame.sprite.groupcollide( self.grupoProyectiles,self.grupoEnemigos, False, False)
-        if coll!={}:
-            for cosa in coll:
-                cosa.vida-=1
-                if cosa.vida<=0 :
-                    cosa.kill()
+#        coll=pygame.sprite.groupcollide( self.grupoProyectiles,self.grupoEnemigos, False, False)
+#        if coll!={}:
+#            for cosa in coll:
+#                cosa.vida-=1
+#                if cosa.vida<=0 :
+#                    cosa.kill()
         # Actualizamos el scroll
         self.actualizarScroll(self.jugador1, self.jugador2)
 
