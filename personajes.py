@@ -274,16 +274,25 @@ class Jugador(Personaje):
         Personaje.__init__(self,'Jugador.png','coordJugador.txt', [6, 12, 6], VELOCIDAD_JUGADOR, VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR);
         self.grupoProyectiles=grupoproy
         self.vida=3
+        self.delaydisp=pygame.time.get_ticks()
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha,disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
         if teclasPulsadas[disparo]:
-            p=Proyectil(self.direcbala)
-            p.establecerPosicion((self.posicion[0],self.posicion[1]))
-            p.scroll=self.scroll
-            #p.posicion=self.posicion
-            self.grupoProyectiles.add(p)#Personaje.mover(self,ARRIBA)
-            self.grupoDinam.add(p)
-            self.grupoSprites.add(p)
+            if (pygame.time.get_ticks()-self.delaydisp)>300:
+                self.delaydisp=pygame.time.get_ticks()
+                p=Proyectil(self.direcbala)
+                p.establecerPosicion((self.posicion[0],self.posicion[1]))
+                p.scroll=self.scroll
+                #p.posicion=self.posicion
+                self.grupoProyectiles.add(p)#Personaje.mover(self,ARRIBA)
+                self.grupoDinam.add(p)
+                self.grupoSprites.add(p)
+            if (not teclasPulsadas[derecha]) and (not teclasPulsadas[izquierda]):
+                Personaje.mover(self,QUIETO)
+            if teclasPulsadas[izquierda]:
+                Personaje.mover(self,IZQUIERDA)
+            if teclasPulsadas[derecha]:
+                Personaje.mover(self,DERECHA)
         elif teclasPulsadas[arriba]:
             Personaje.mover(self,ARRIBA)
         elif teclasPulsadas[izquierda]:
@@ -353,10 +362,17 @@ class Proyectil(Personaje):
         Personaje.__init__(self,'disparo.png','coordSniper.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
         self.direcc=direccion
         self.vida=1
+        self.lifetime=pygame.time.get_ticks()
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
     def mover_cpu(self, jugador1):
-        Personaje.mover(self,self.direcc)
+        #print (pygame.time.get_ticks()-self.lifetime)
+        if (pygame.time.get_ticks()-self.lifetime)>1800:
+            #print self, self.lifetime, pygame.time.get_ticks()
+            self.kill()
+        else:
+            #self.lifetime-=pygame.time.get_ticks()
+            Personaje.mover(self,self.direcc)
 
     def update(self, grupoPlataformas, tiempo):
 
