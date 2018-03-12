@@ -454,3 +454,6 @@ class PowerUp(Personaje):
     # La implementacion de la inteligencia segun este personaje particular
     def mover_cpu(self, jugador1):
         return
+    def efecto(self,jugador1):
+        print "PowerUp"
+        return

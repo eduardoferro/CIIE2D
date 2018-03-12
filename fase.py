@@ -219,10 +219,11 @@ class Fase(Escena):
                 cosa.recibir_dano()
                 if cosa.vida<0 :
                     cosa.kill()
-        coll=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoPowerUps, False, True)
+        coll=pygame.sprite.groupcollide(self.grupoPowerUps, self.grupoJugadores, True, False)
         if coll!={}:
-            print "PowerUp"
-            self.jugador1.velocidadCarrera=(self.jugador1.velocidadCarrera*2)
+            for up in coll:
+                up.efecto(self.jugador1)
+            
             # self.jugador2.vida-=1
             #if self.jugador2.vida<0 :
             #    return True
