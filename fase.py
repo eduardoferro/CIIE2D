@@ -4,7 +4,7 @@ import pygame
 from personajes import *
 from pygame.locals import *
 from gestorRecursos import *
-
+from escena import *
 # -------------------------------------------------
 # -------------------------------------------------
 # Constantes
@@ -20,8 +20,8 @@ MAXIMO_X_JUGADOR = ANCHO_PANTALLA - MINIMO_X_JUGADOR
 # -------------------------------------------------
 # Clase Fase
 
-class Fase:
-    def __init__(self):
+class Fase(Escena):
+    def __init__(self,director):
 
         # Habria que pasarle como parámetro el número de fase, a partir del cual se cargue
         #  un fichero donde este la configuracion de esa fase en concreto, con cosas como
@@ -32,7 +32,7 @@ class Fase:
         #  etc.
         # Y cargar esa configuracion del archivo en lugar de ponerla a mano, como aqui abajo
         # De esta forma, se podrian tener muchas fases distintas con esta clase
-
+        Escena.__init__(self, director)
         # Creamos el decorado y el fondo
         self.decorado = Decorado()
         self.fondo = Cielo()
@@ -216,8 +216,8 @@ class Fase:
         if coll!={}:
             for cosa in coll:
                 cosa.vida-=1
-                #print "IMPACTO" , cosa
-                if cosa.vida<=0 :
+                cosa.recibir_dano()
+                if cosa.vida<0 :
                     cosa.kill()
         coll=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoPowerUps, False, True)
         if coll!={}:
@@ -255,9 +255,9 @@ class Fase:
     def eventos(self, lista_eventos):
         # Miramos a ver si hay algun evento de salir del programa
         for evento in lista_eventos:
-            # Si se sale del programa
+            # Si se quiere salir, se le indica al director
             if evento.type == pygame.QUIT:
-                return True
+                self.director.salirPrograma()
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()

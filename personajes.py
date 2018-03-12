@@ -313,15 +313,29 @@ class NoJugador(Personaje):
     def __init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion):
         # Primero invocamos al constructor de la clase padre con los parametros pasados
         Personaje.__init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion);
+        self.quieto=False
         self.vida=3
+        self.danodelay=pygame.time.get_ticks()
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
+    def update (self, grupoPlataformas, tiempo):
+        if (pygame.time.get_ticks()-self.danodelay)>400:
+            self.quieto=False
+        if not self.quieto:
+            Personaje.update( self,grupoPlataformas, tiempo)
     def mover_cpu(self, jugador1):
         # Por defecto un enemigo no hace nada
         #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
-        return
 
+        return
+    def recibir_dano(self):
+        if (pygame.time.get_ticks()-self.danodelay)>600:
+            self.danodelay=pygame.time.get_ticks()
+            self.vida-=1
+            self.quieto=True
+
+        return
 # -------------------------------------------------
 # Clase Sniper
 
@@ -330,31 +344,33 @@ class Sniper(NoJugador):
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         NoJugador.__init__(self,'Sniper.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
-        self.vida=3
+        self.vida=5
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
+   
     def mover_cpu(self, jugador1):
-
-        # Movemos solo a los enemigos que esten en la pantalla
-        if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
-
-            # Por ejemplo, intentara acercarse al jugador mas cercano en el eje x
-            # Miramos cual es el jugador mas cercano
-            # if abs(jugador1.posicion[0]-self.posicion[0])<abs(jugador2.posicion[0]-self.posicion[0]):
-            jugadorMasCercano = jugador1
-            # else:
-            #     jugadorMasCercano = jugador2
-            # Y nos movemos andando hacia el
-            if jugadorMasCercano.posicion[0]<self.posicion[0]:
-                Personaje.mover(self,IZQUIERDA)
-            else:
-                Personaje.mover(self,DERECHA)
-
-        # Si este personaje no esta en pantalla, no hara nada
+        if self.quieto==True :
+            return
         else:
-            Personaje.mover(self,QUIETO)
+            # Movemos solo a los enemigos que esten en la pantalla
+            if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
 
+                # Por ejemplo, intentara acercarse al jugador mas cercano en el eje x
+                # Miramos cual es el jugador mas cercano
+                # if abs(jugador1.posicion[0]-self.posicion[0])<abs(jugador2.posicion[0]-self.posicion[0]):
+                jugadorMasCercano = jugador1
+                # else:
+                #     jugadorMasCercano = jugador2
+                # Y nos movemos andando hacia el
+                if jugadorMasCercano.posicion[0]<self.posicion[0]:
+                    Personaje.mover(self,IZQUIERDA)
+                else:
+                    Personaje.mover(self,DERECHA)
 
+            # Si este personaje no esta en pantalla, no hara nada
+            else:
+                Personaje.mover(self,QUIETO)
+            
 class Proyectil(Personaje):
     "El proyectil del enemigo"
     def __init__(self,direccion):
