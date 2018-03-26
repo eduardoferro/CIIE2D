@@ -262,7 +262,7 @@ class Fase(Escena):
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()
-        self.jugador1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_c)
+        self.jugador1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_c, K_v)
         # self.jugador2.mover(teclasPulsadas, K_w,  K_s,    K_a,    K_d,K_e)
         # No se sale del programa
         return False
