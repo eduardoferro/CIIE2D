@@ -49,13 +49,13 @@ class Boton(ElementoGUI):
 
 class BotonJugar(Boton):
     def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'boton_verde.png', (580,530))
+        Boton.__init__(self, pantalla, 'boton_verde.png', (580,455))
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
 class BotonSalir(Boton):
     def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'boton_rojo.png', (580,560))
+        Boton.__init__(self, pantalla, 'boton_rojo.png', (580,525))
     def accion(self):
         self.pantalla.menu.salirPrograma()
 
@@ -76,16 +76,16 @@ class TextoGUI(ElementoGUI):
 class TextoJugar(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
-        fuente = pygame.font.SysFont('arial', 26);
-        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Jugar', (610, 535))
+        fuente = pygame.font.SysFont('arial', 56);
+        TextoGUI.__init__(self, pantalla, fuente, (230, 54, 72), 'Jugar', (610, 465))
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
 class TextoSalir(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
-        fuente = pygame.font.SysFont('arial', 26);
-        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Salir', (610, 565))
+        fuente = pygame.font.SysFont('arial', 56);
+        TextoGUI.__init__(self, pantalla, fuente, (255, 255, 255), 'Salir', (610, 535))
     def accion(self):
         self.pantalla.menu.salirPrograma()
 
