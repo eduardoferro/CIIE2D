@@ -65,16 +65,33 @@ class Fase(Escena):
 
         # Y los enemigos que tendran en este decorado
         enemigo1 = Sniper()
-        enemigo1.establecerPosicion((1000, 418))
+        enemigo1.establecerPosicion((1000, 300))
 
+        # Creamos un grupo con los proyectiles enemigos
+        self.grupoProyectilesEnemigo = pygame.sprite.Group() 
+        # Creamos el enemigo
+        enemigo2 = Sniper_Dispara(self.grupoProyectilesEnemigo)
+        # ponemos el enemigo en su posicion
+        enemigo2.establecerPosicion((1000, 200))
+
+        enemigo3 = Tirador_Arriba(self.grupoProyectilesEnemigo)
+        enemigo3.establecerPosicion((930, 200))
+
+        enemigo4 = Tirador_Abajo(self.grupoProyectilesEnemigo)
+        enemigo4.establecerPosicion((900, 200))
         # Creamos un grupo con los enemigos
-        self.grupoEnemigos = pygame.sprite.Group( enemigo1 )
+        self.grupoEnemigos = pygame.sprite.Group(enemigo1, enemigo2, enemigo3, enemigo4)
 
+        
         # Creamos un grupo con los Sprites que se mueven
-        #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1, enemigo1 )
+        #  En este caso, personajes y proyectiles
+        self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1, enemigo1, enemigo2, enemigo3, enemigo4, self.grupoProyectilesEnemigo)
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group( self.jugador1, enemigo1, plataformaSuelo, plataformaCasa,self.powerup1 )
+        self.grupoSprites = pygame.sprite.Group( self.jugador1, enemigo1, enemigo2, enemigo3, enemigo4, plataformaSuelo, plataformaCasa, self.powerup1)
+        enemigo2.setgrupoproyEnem(self.grupoSpritesDinamicos,self.grupoSprites)
+        enemigo3.setgrupoproyEnem(self.grupoSpritesDinamicos,self.grupoSprites)
+        enemigo4.setgrupoproyEnem(self.grupoSpritesDinamicos,self.grupoSprites)
+    
         self.jugador1.setgrupproy(self.grupoSpritesDinamicos,self.grupoSprites)
 
 
@@ -191,6 +208,9 @@ class Fase(Escena):
             enemigo.mover_cpu(self.jugador1)
         for bala in iter(self.grupoProyectiles):
             bala.mover_cpu(self.jugador1)
+        for bala in iter(self.grupoProyectilesEnemigo):
+            bala.mover_cpu(self.jugador1)
+            
         # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA
         # En el caso de los jugadores, esto ya se ha realizado
 
@@ -215,7 +235,6 @@ class Fase(Escena):
         coll=pygame.sprite.groupcollide(self.grupoEnemigos, self.grupoProyectiles, False, True)
         if coll!={}:
             for cosa in coll:
-                cosa.vida-=1
                 cosa.recibir_dano()
                 if cosa.vida<0 :
                     cosa.kill()
