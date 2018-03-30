@@ -10,6 +10,8 @@ class Escena:
 
     def __init__(self, director):
         self.director = director
+        self.cutscenesprimero=[]
+        self.cutscenesultimo=[]
 
     def update(self, *args):
         raise NotImplemented("Tiene que implementar el metodo update.")

@@ -5,6 +5,7 @@ from pygame.locals import *
 from escena import *
 from gestorRecursos import *
 from fase import Fase
+from textToFase import *
 
 # -------------------------------------------------
 # Clase abstracta ElementoGUI
@@ -177,7 +178,9 @@ class Menu(Escena):
         self.director.salirPrograma()
 
     def ejecutarJuego(self):
-        fase = Fase(self.director)
+        ttf = textToFaseFactory()
+        fase=ttf.createFase('fase1.conf',self.director)
+        
         self.director.apilarEscena(fase)
 
     def mostrarPantallaInicial(self):

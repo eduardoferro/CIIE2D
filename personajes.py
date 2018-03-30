@@ -457,3 +457,55 @@ class PowerUp(Personaje):
     def efecto(self,jugador1):
         print "PowerUp"
         return
+
+#--------------------------------------------------------------
+
+#Diferentes enemigos
+class mob1(NoJugador):
+    "El enemigo 'Sniper'"
+    def __init__(self):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        NoJugador.__init__(self,'mob1pix.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+        self.vida=2
+    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
+    # La implementacion de la inteligencia segun este personaje particular
+   
+    def mover_cpu(self, jugador1):
+        if self.quieto==True :
+            return
+        else:
+            # Movemos solo a los enemigos que esten en la pantalla
+            if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
+
+                # Por ejemplo, intentara acercarse al jugador mas cercano en el eje x
+                # Miramos cual es el jugador mas cercano
+                # if abs(jugador1.posicion[0]-self.posicion[0])<abs(jugador2.posicion[0]-self.posicion[0]):
+                jugadorMasCercano = jugador1
+                # else:
+                #     jugadorMasCercano = jugador2
+                # Y nos movemos andando hacia el
+                if jugadorMasCercano.posicion[0]<self.posicion[0]:
+                    Personaje.mover(self,IZQUIERDA)
+                else:
+                    Personaje.mover(self,DERECHA)
+
+            # Si este personaje no esta en pantalla, no hara nada
+            else:
+                Personaje.mover(self,QUIETO)
+#--------------------------------------------------------------
+#Diferentes power ups
+
+class powerupSpeed(PowerUp):
+    "PowerUp para el personaje"
+    def __init__(self):
+        Personaje.__init__(self,'powerup.png','coordSniper.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+    def efecto(self,jugador1):
+        return
+class powerupBotiquin(PowerUp):
+    "PowerUp para el personaje"
+    def __init__(self):
+        Personaje.__init__(self,'powerupBotiquin.png','coordSniper.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+    def efecto(self,jugador1):
+        jugador1.vida=3
+        return
+

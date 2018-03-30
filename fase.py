@@ -34,16 +34,15 @@ class Fase(Escena):
         # De esta forma, se podrian tener muchas fases distintas con esta clase
         Escena.__init__(self, director)
         # Creamos el decorado y el fondo
-        self.decorado = Decorado()
+       
         self.fondo = Cielo()
-
+        self.decorado=Decorado('decorado.png',1200,300,1)
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
-        self.powerup1 = PowerUp()
-        self.powerup1.establecerPosicion((500,551))
-        self.grupoPowerUps=pygame.sprite.Group(self.powerup1)
+        
+        self.grupoPowerUps=pygame.sprite.Group()
 
         # Creamos los sprites de los jugadores
         self.grupoProyectiles = pygame.sprite.Group()
@@ -52,32 +51,47 @@ class Fase(Escena):
         self.grupoJugadores = pygame.sprite.Group( self.jugador1 )
 
         # Ponemos a los jugadores en sus posiciones iniciales
-        self.jugador1.establecerPosicion((200, 551))
+        
         # self.jugador2.establecerPosicion((400, 551))
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma todo el suelo
-        plataformaSuelo = Plataforma(pygame.Rect(0, 550, 1200, 15))
-        # La plataforma del techo del edificio
-        plataformaCasa = Plataforma(pygame.Rect(870, 417, 199.9, 10))
+
         # y el grupo con las mismas
-        self.grupoPlataformas = pygame.sprite.Group( plataformaSuelo, plataformaCasa )
+        self.grupoPlataformas = pygame.sprite.Group( )
 
         # Y los enemigos que tendran en este decorado
-        enemigo1 = Sniper()
-        enemigo1.establecerPosicion((1000, 418))
+        
 
         # Creamos un grupo con los enemigos
-        self.grupoEnemigos = pygame.sprite.Group( enemigo1 )
+        self.grupoEnemigos = pygame.sprite.Group(  )
 
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1, enemigo1 )
+        self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1 )
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group( self.jugador1, enemigo1, plataformaSuelo, plataformaCasa,self.powerup1 )
+        self.grupoSprites = pygame.sprite.Group( self.jugador1 )
         self.jugador1.setgrupproy(self.grupoSpritesDinamicos,self.grupoSprites)
+    def addPlataforma(self,plat):
+        self.grupoPlataformas.add(plat)
+        self.grupoSprites.add(plat)
+    #def setFondo(self,fondo):
 
+    def addPowerUp(self,powerup):
+        self.grupoSprites.add(powerup)
+        self.grupoPowerUps.add(powerup)
 
+    def addEnemigo(self,enem):
+        self.grupoEnemigos.add(enem)
+        self.grupoSpritesDinamicos.add(enem)
+        self.grupoSprites.add(enem)
+
+    def setDecorado(self,file,x,y,scrolldelay):
+        self.decorado = Decorado(file,x,y,scrolldelay)
+    def setFondo(self,file,x,y,scrolldelay):
+        self.fondo = Decorado(file,x,y,scrolldelay)
+    def setJugador(self,x,y):
+        self.jugador1.establecerPosicion((x, y))
 
     # Devuelve True o False según se ha tenido que desplazar el scroll
     def actualizarScrollOrdenados(self, jugador1):
@@ -173,7 +187,7 @@ class Fase(Escena):
 
             # Ademas, actualizamos el decorado para que se muestre una parte distinta
             self.decorado.update(self.scrollx)
-
+            self.fondo.update(self.scrollx)
 
 
     # Se actualiza el decorado, realizando las siguientes acciones:
@@ -238,7 +252,7 @@ class Fase(Escena):
 
         # Actualizamos el fondo:
         #  la posicion del sol y el color del cielo
-        self.fondo.update(tiempo)
+        #self.fondo.update(tiempo)
 
         # No se debe parar la ejecucion
         return False
@@ -288,40 +302,73 @@ class Plataforma(MiSprite):
 
 class Cielo:
     def __init__(self):
-        self.sol = GestorRecursos.CargarImagen('sol.png', -1)
-        self.sol = pygame.transform.scale(self.sol, (300, 200))
-
-        self.rect = self.sol.get_rect()
-        self.posicionx = 0 # El lado izquierdo de la subimagen que se esta visualizando
-        self.update(0)
-
+       pass
     def update(self, tiempo):
-        self.posicionx += VELOCIDAD_SOL * tiempo
-        if (self.posicionx - self.rect.width >= ANCHO_PANTALLA):
-            self.posicionx = 0
-        self.rect.right = self.posicionx
-        # Calculamos el color del cielo
-        if self.posicionx >= ((self.rect.width + ANCHO_PANTALLA) / 2):
-            ratio = 2 * ((self.rect.width + ANCHO_PANTALLA) - self.posicionx) / (self.rect.width + ANCHO_PANTALLA)
-        else:
-            ratio = 2 * self.posicionx / (self.rect.width + ANCHO_PANTALLA)
-        self.colorCielo = (100*ratio, 200*ratio, 255)
+        pass
 
     def dibujar(self,pantalla):
-        # Dibujamos el color del cielo
-        pantalla.fill(self.colorCielo)
-        # Y ponemos el sol
-        pantalla.blit(self.sol, self.rect)
+        pass
 
 
 # -------------------------------------------------
 # Clase Decorado
 
 class Decorado:
-    def __init__(self):
-        self.imagen = GestorRecursos.CargarImagen('decorado.png', -1)
-        self.imagen = pygame.transform.scale(self.imagen, (1200, 300))
+    def __init__(self,file,x,y,scrolldelay):
+        self.imagen = GestorRecursos.CargarImagen(file, -1)
+        self.imagen = pygame.transform.scale(self.imagen, (x, y))
+        self.scrolldelay=scrolldelay
+        self.rect = self.imagen.get_rect()
+        self.rect.bottom = ALTO_PANTALLA
+        # La subimagen que estamos viendo
+        self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
+        self.rectSubimagen.left = 0 # El scroll horizontal empieza en la posicion 0 por defecto
 
+    def update(self, scrollx):
+        self.rectSubimagen.left = scrollx*self.scrolldelay
+        
+
+    def dibujar(self, pantalla):
+        pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
+# -------------------------------------------------
+# Clase Cutscene   
+class Cutscene(Fase):
+    def __init__(self, director,limagenes):
+
+        self.delay = pygame.time.get_ticks()
+        Escena.__init__(self, director)
+        self.image = Image(director,limagenes)
+
+    def update(self, tiempo):
+        self.image.update(tiempo)
+        
+    def dibujar(self, pantalla):
+        self.image.dibujar(pantalla)
+
+
+    def eventos(self, lista_eventos):
+        for evento in lista_eventos:
+            if evento.type == pygame.QUIT:
+                self.director.salirPrograma()
+
+        # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
+        teclasPulsadas = pygame.key.get_pressed()
+        if teclasPulsadas[K_c]:
+            if(pygame.time.get_ticks()-self.delay)>300:
+                
+                self.delay = pygame.time.get_ticks()
+                self.image.advance()
+
+# -------------------------------------------------
+# Clase Image
+
+class Image:
+    def __init__(self,director,limagenes):
+        self.imagen = GestorRecursos.CargarImagen(limagenes[0], -1)
+        self.imagen = pygame.transform.scale(self.imagen, (800, 600))
+        self.count = 1
+        self.director = director
+        self.limagenes=limagenes
         self.rect = self.imagen.get_rect()
         self.rect.bottom = ALTO_PANTALLA
 
@@ -329,8 +376,20 @@ class Decorado:
         self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
         self.rectSubimagen.left = 0 # El scroll horizontal empieza en la posicion 0 por defecto
 
+    def change(self, img):
+        self.imagen = GestorRecursos.CargarImagen(img, -1)
+
+    def advance(self):
+        if self.count<len(self.limagenes):
+            self.change(self.limagenes[self.count])
+            self.count+=1
+        else:
+            self.director.salirEscena()
+        
+
     def update(self, scrollx):
-        self.rectSubimagen.left = scrollx
+        self.rectSubimagen.left = 0
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
+
