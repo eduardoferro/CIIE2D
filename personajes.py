@@ -275,12 +275,15 @@ class Jugador(Personaje):
         self.grupoProyectiles=grupoproy
         self.vida=3
         self.delaydisp=pygame.time.get_ticks()
-    def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha,disparo):
+    def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha,disparo, disparoArriba):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
-        if teclasPulsadas[disparo]:
+        if teclasPulsadas[disparo] or teclasPulsadas[disparoArriba]:
             if (pygame.time.get_ticks()-self.delaydisp)>300:
                 self.delaydisp=pygame.time.get_ticks()
-                p=Proyectil(self.direcbala)
+                if teclasPulsadas[disparo]:
+                    p=Proyectil(self.direcbala)
+                if teclasPulsadas[disparoArriba]:
+                    p=Proyectil(ARRIBA)
                 p.establecerPosicion((self.posicion[0],self.posicion[1]))
                 p.scroll=self.scroll
                 #p.posicion=self.posicion
