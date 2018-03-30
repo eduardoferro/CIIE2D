@@ -22,10 +22,15 @@ class textToFaseFactory():
 				self.readCutscenePrimero(cachos[1:len(cachos)-1])
 			if cachos[0]=='cu':#cutscenes despues
 				self.readCutsceneUltimo(cachos[1:len(cachos)-1])
+			if cachos[0]=='ef':
+				self.readEndFase(cachos[1:])
 			linea=f.readline()
 		return self.nuevafase
+	def readEndFase(self,listaValores):
+		final=EndFase()
+		final.establecerPosicion((int(listaValores[0]),int(listaValores[1])))
+		self.nuevafase.setFin(final)
 	def readCutscenePrimero(self,listaValores):
-		print (listaValores)
 		self.nuevafase.cutscenesprimero=(Cutscene(self.nuevafase.director,listaValores))
 
 	def readCutsceneUltimo(self,listaValores):

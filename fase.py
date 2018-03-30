@@ -43,7 +43,7 @@ class Fase(Escena):
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
         
         self.grupoPowerUps=pygame.sprite.Group()
-
+        self.grupoFinFase=pygame.sprite.Group()
         # Creamos los sprites de los jugadores
         self.grupoProyectiles = pygame.sprite.Group()
         self.jugador1 = Jugador(self.grupoProyectiles)
@@ -92,6 +92,9 @@ class Fase(Escena):
         self.fondo = Decorado(file,x,y,scrolldelay)
     def setJugador(self,x,y):
         self.jugador1.establecerPosicion((x, y))
+    def setFin(self,fin):
+        self.grupoSprites.add(fin)
+        self.grupoFinFase.add(fin)
 
     # Devuelve True o False según se ha tenido que desplazar el scroll
     def actualizarScrollOrdenados(self, jugador1):
@@ -237,7 +240,9 @@ class Fase(Escena):
         if coll!={}:
             for up in coll:
                 up.efecto(self.jugador1)
-            
+        coll=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoFinFase, True, False)
+        if coll!={}:
+            self.director.salirEscena()
             # self.jugador2.vida-=1
             #if self.jugador2.vida<0 :
             #    return True
@@ -338,12 +343,15 @@ class Cutscene(Fase):
         self.delay = pygame.time.get_ticks()
         Escena.__init__(self, director)
         self.image = Image(director,limagenes)
-
+        self.init=False
     def update(self, tiempo):
         self.image.update(tiempo)
         
     def dibujar(self, pantalla):
         self.image.dibujar(pantalla)
+        if self.init==False:
+            self.delay = pygame.time.get_ticks()
+            self.init=True
 
 
     def eventos(self, lista_eventos):
@@ -354,8 +362,8 @@ class Cutscene(Fase):
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()
         if teclasPulsadas[K_c]:
-            if(pygame.time.get_ticks()-self.delay)>300:
-                
+            if(pygame.time.get_ticks()-self.delay)>1000 and self.init==True:
+                #print ('PULSADO',self,self.image.count,pygame.time.get_ticks()-self.delay)
                 self.delay = pygame.time.get_ticks()
                 self.image.advance()
 

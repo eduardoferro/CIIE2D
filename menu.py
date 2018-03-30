@@ -180,9 +180,14 @@ class Menu(Escena):
     def ejecutarJuego(self):
         ttf = textToFaseFactory()
         fase=ttf.createFase('fase1.conf',self.director)
-        
-        self.director.apilarEscena(fase)
+        fase1boss=ttf.createFase('fase1Boss.conf',self.director)
+        fase2=ttf.createFase('fase2.conf',self.director)
+        fase4=ttf.createFase('fase4.conf',self.director)
 
+        self.director.apilarEscena(fase4)
+        self.director.apilarEscena(fase2)
+        self.director.apilarEscena(fase1boss)
+        self.director.apilarEscena(fase)
     def mostrarPantallaInicial(self):
         self.pantallaActual = 0
 
