@@ -34,7 +34,6 @@ class textToFaseFactory():
 		self.nuevafase.cutscenesprimero=(Cutscene(self.nuevafase.director,listaValores))
 
 	def readCutsceneUltimo(self,listaValores):
-		print (listaValores)
 		self.nuevafase.cutscenesultimo=(Cutscene(self.nuevafase.director,listaValores))
 	def readFondo(self,listaValores):
 		self.nuevafase.setFondo(listaValores[0],int(listaValores[1]),int(listaValores[2]),float(listaValores[3]))
@@ -59,6 +58,9 @@ class textToFaseFactory():
 				enemigo1.setgrupoproyEnem(self.nuevafase.grupoSpritesDinamicos,self.nuevafase.grupoSprites)
 			if (int(subcachos[0])==5):
 				enemigo1 = Tirador_Abajo(self.nuevafase.grupoProyectilesEnemigo)
+				enemigo1.setgrupoproyEnem(self.nuevafase.grupoSpritesDinamicos,self.nuevafase.grupoSprites)
+			if (int(subcachos[0])==6):
+				enemigo1 = Boss1(self.nuevafase.grupoProyectilesEnemigo,self.nuevafase.director)
 				enemigo1.setgrupoproyEnem(self.nuevafase.grupoSpritesDinamicos,self.nuevafase.grupoSprites)
 			enemigo1.establecerPosicion((int(subcachos[1]),int( subcachos[2])))
 			self.nuevafase.addEnemigo(enemigo1)

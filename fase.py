@@ -237,11 +237,13 @@ class Fase(Escena):
                 cosa.vida-=1
                 cosa.recibir_dano()
                 if cosa.vida<0 :
-                    cosa.kill()
+                	cosa.sonidomuerte.play()
+                	cosa.kill()
         coll=pygame.sprite.groupcollide(self.grupoPowerUps, self.grupoJugadores, True, False)
         if coll!={}:
             for up in coll:
                 up.efecto(self.jugador1)
+                up.sonido.play()
         coll=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoFinFase, True, False)
         if coll!={}:
             self.director.salirEscena()

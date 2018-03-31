@@ -82,11 +82,9 @@ class Director():
        
         if escena.cutscenesultimo!=[]:
             self.pila.append(escena.cutscenesultimo)
-            print('apilando',escena.cutscenesultimo)
+           
         self.pila.append(escena)
-        print('apilando',escena)
 
         if escena.cutscenesprimero!=[]:
             self.pila.append(escena.cutscenesprimero)
-            print('apilando',escena.cutscenesprimero)
 
