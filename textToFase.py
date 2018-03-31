@@ -51,6 +51,15 @@ class textToFaseFactory():
 				enemigo1 = Sniper()
 			if (int(subcachos[0])==2):
 				enemigo1 = mob1()
+			if (int(subcachos[0])==3):
+				enemigo1 = Sniper_Dispara(self.nuevafase.grupoProyectilesEnemigo)
+				enemigo1.setgrupoproyEnem(self.nuevafase.grupoSpritesDinamicos,self.nuevafase.grupoSprites)
+			if (int(subcachos[0])==4):
+				enemigo1 = Tirador_Arriba(self.nuevafase.grupoProyectilesEnemigo)
+				enemigo1.setgrupoproyEnem(self.nuevafase.grupoSpritesDinamicos,self.nuevafase.grupoSprites)
+			if (int(subcachos[0])==5):
+				enemigo1 = Tirador_Abajo(self.nuevafase.grupoProyectilesEnemigo)
+				enemigo1.setgrupoproyEnem(self.nuevafase.grupoSpritesDinamicos,self.nuevafase.grupoSprites)
 			enemigo1.establecerPosicion((int(subcachos[1]),int( subcachos[2])))
 			self.nuevafase.addEnemigo(enemigo1)
 	def readObjetos(self,listaValores):
