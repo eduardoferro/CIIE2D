@@ -41,7 +41,7 @@ class Fase(Escena):
         self.scrollx = 0
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
-        
+        self.grupoProyectilesEnemigo = pygame.sprite.Group()
         self.grupoPowerUps=pygame.sprite.Group()
         self.grupoFinFase=pygame.sprite.Group()
         # Creamos los sprites de los jugadores
@@ -207,6 +207,8 @@ class Fase(Escena):
         for enemigo in iter(self.grupoEnemigos):
             enemigo.mover_cpu(self.jugador1)
         for bala in iter(self.grupoProyectiles):
+            bala.mover_cpu(self.jugador1)
+        for bala in iter(self.grupoProyectilesEnemigo):
             bala.mover_cpu(self.jugador1)
         # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA
         # En el caso de los jugadores, esto ya se ha realizado

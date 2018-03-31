@@ -424,6 +424,11 @@ class Proyectil(Personaje):
             self.numPostura = SPRITE_SALTANDO
             # Le imprimimos una velocidad en el eje y
             velocidady = -self.velocidadSalto
+        elif self.movimiento == ABAJO:
+            # La postura actual sera estar saltando
+            self.numPostura = SPRITE_SALTANDO
+            # Le imprimimos una velocidad en el eje y
+            velocidady = self.velocidadSalto
 
         # Si no se ha pulsado ninguna tecla
         elif self.movimiento == QUIETO:
@@ -476,6 +481,114 @@ class EndFase(Personaje):
         return
 #--------------------------------------------------------------
 
+class Sniper_Dispara(Sniper):
+    "Enemigo 'Sniper' que solo nos dispara"
+    def __init__(self,grupoproyEnem):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        NoJugador.__init__(self,'Sniper.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+        self.vida=5
+        self.grupoProyectilesEnemigo=grupoproyEnem
+        self.delaydisp=pygame.time.get_ticks()
+
+    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
+    # La implementacion de la inteligencia segun este personaje particular
+   
+    def mover_cpu(self, jugador1):
+        if self.quieto==True :
+            return
+        else:
+            # Disparan solo los enemigos que esten en la pantalla
+            if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
+                self.mover(QUIETO)
+                if (pygame.time.get_ticks()-self.delaydisp)>300:
+                    self.delaydisp=(pygame.time.get_ticks())*1.2
+                    jugadorMasCercano = jugador1
+                    if jugadorMasCercano.posicion[0]<self.posicion[0]:
+                        self.disparar(IZQUIERDA) 
+                        self.mover(IZQUIERDA)
+                    else:
+                        self.disparar(DERECHA)
+                        self.mover(DERECHA)
+            # Si este personaje no esta en pantalla, no hara nada
+            else:
+                Personaje.mover(self,QUIETO)
+
+    def disparar(self,direccion):
+        p=Proyectil(direccion)
+        p.establecerPosicion((self.posicion[0],self.posicion[1]))
+        p.scroll=self.scroll 
+        self.grupoProyectilesEnemigo.add(p)
+        self.grupoDinam.add(p)
+        self.grupoSprites.add(p)
+
+    def setgrupoproyEnem(self,grupdinam,grupsprit):
+        self.grupoDinam=grupdinam
+        self.grupoSprites=grupsprit
+
+
+class Tirador_Arriba(Sniper_Dispara):
+    "Enemigo que no se mueve, nos dispara desde abajo"
+    def __init__(self,grupoproyEnem):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        NoJugador.__init__(self,'Sniper.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+        self.vida=3
+        self.grupoProyectilesEnemigo=grupoproyEnem
+        self.delaydisp=pygame.time.get_ticks()
+
+    def mover_cpu(self, jugador1):
+        if self.quieto==True :
+            return
+        else:
+            # Disparan solo los enemigos que esten en la pantalla
+            if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
+                if (pygame.time.get_ticks()-self.delaydisp)>300:
+                    self.delaydisp=(pygame.time.get_ticks())*1.2
+                    jugadorMasCercano = jugador1
+                    p=Proyectil(ARRIBA)
+                    p.establecerPosicion((self.posicion[0],self.posicion[1]))
+                    p.scroll=self.scroll 
+                    self.grupoProyectilesEnemigo.add(p)
+                    self.grupoDinam.add(p)
+                    self.grupoSprites.add(p)           
+            # Si este personaje no esta en pantalla, no hara nada
+            else:
+                Personaje.mover(self,QUIETO)    
+
+    def setgrupoproyEnem(self,grupdinam,grupsprit):
+        self.grupoDinam=grupdinam
+        self.grupoSprites=grupsprit
+
+class Tirador_Abajo(Sniper_Dispara):
+    "Enemigo que no se mueve, nos dispara desde arriba"
+    def __init__(self,grupoproyEnem):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        NoJugador.__init__(self,'Sniper.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+        self.vida=3
+        self.grupoProyectilesEnemigo=grupoproyEnem
+        self.delaydisp=pygame.time.get_ticks()
+
+    def mover_cpu(self, jugador1):
+        if self.quieto==True :
+            return
+        else:
+            # Disparan solo los enemigos que esten en la pantalla
+            if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
+                if (pygame.time.get_ticks()-self.delaydisp)>300:
+                    self.delaydisp=(pygame.time.get_ticks())*1.2
+                    jugadorMasCercano = jugador1
+                    p=Proyectil(ABAJO)
+                    p.establecerPosicion((self.posicion[0],self.posicion[1]))
+                    p.scroll=self.scroll 
+                    self.grupoProyectilesEnemigo.add(p)
+                    self.grupoDinam.add(p)
+                    self.grupoSprites.add(p)           
+            # Si este personaje no esta en pantalla, no hara nada
+            else:
+                Personaje.mover(self,QUIETO)    
+
+    def setgrupoproyEnem(self,grupdinam,grupsprit):
+        self.grupoDinam=grupdinam
+        self.grupoSprites=grupsprit
 #Diferentes enemigos
 class mob1(NoJugador):
     "El enemigo 'Sniper'"
