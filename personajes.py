@@ -275,10 +275,13 @@ class Jugador(Personaje):
         self.grupoProyectiles=grupoproy
         self.vida=3
         self.delaydisp=pygame.time.get_ticks()
+        #self.sonidodisp=pygame.mixer.Sound('sonidos/Pium.ogg')
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha,disparo, disparoArriba):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
         if teclasPulsadas[disparo] or teclasPulsadas[disparoArriba]:
             if (pygame.time.get_ticks()-self.delaydisp)>300:
+            	
+                #self.sonidodisp.play(1)
                 self.delaydisp=pygame.time.get_ticks()
                 if teclasPulsadas[disparo]:
                     p=Proyectil(self.direcbala)
@@ -319,6 +322,8 @@ class NoJugador(Personaje):
         self.quieto=False
         self.vida=3
         self.danodelay=pygame.time.get_ticks()
+        #self.sonidomuerte=pygame.mixer.Sound('sonidos/Uuuuuuuug.mp3')
+        #self.sonidodano=pygame.mixer.Sound('sonidos/Uug.mp3')
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
     #  mostrando la personalidad de cada enemigo
@@ -337,6 +342,7 @@ class NoJugador(Personaje):
             self.danodelay=pygame.time.get_ticks()
             self.vida-=1
             self.quieto=True
+            self.sonidodano.play()
 
         return
 # -------------------------------------------------
@@ -460,9 +466,11 @@ class PowerUp(Personaje):
         Personaje.__init__(self,'disparo.png','coordSniper.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
     # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
     # La implementacion de la inteligencia segun este personaje particular
+    	#self.sonido=pygame.mixer.Sound('sonidos/Turururu.mp3')
     def mover_cpu(self, jugador1):
         return
     def efecto(self,jugador1):
+    	
         print "PowerUp"
         return
 
@@ -621,6 +629,58 @@ class mob1(NoJugador):
             # Si este personaje no esta en pantalla, no hara nada
             else:
                 Personaje.mover(self,QUIETO)
+                
+#-------------------------------------------------------------
+#BOSES
+
+class Boss1(Sniper):
+    "Enemigo 'Sniper' que solo nos dispara"
+    def __init__(self,grupoproyEnem,director):
+        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
+        NoJugador.__init__(self,'Sniper.png','coordSniper.txt', [5, 10, 6], VELOCIDAD_SNIPER*3, VELOCIDAD_SALTO_SNIPER*3, RETARDO_ANIMACION_SNIPER);
+        self.vida=6
+        self.grupoProyectilesEnemigo=grupoproyEnem
+        self.delaydisp=pygame.time.get_ticks()
+        self.director=director
+    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
+    # La implementacion de la inteligencia segun este personaje particular
+   
+    def mover_cpu(self, jugador1):
+        if self.vida<=1:
+        	self.director.salirEscena()
+        if self.quieto==True :
+            return
+        else:
+            # Disparan solo los enemigos que esten en la pantalla
+            #print(self.rect.left,self.rect.right,self.rect.bottom,self.rect.top)
+           # if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
+                if (pygame.time.get_ticks()-self.delaydisp)>600:
+				self.mover(QUIETO)
+                if (pygame.time.get_ticks()-self.delaydisp)>700:
+                    self.delaydisp=(pygame.time.get_ticks())
+                    jugadorMasCercano = jugador1
+                    if jugadorMasCercano.posicion[0]<self.posicion[0]:
+                        #self.disparar(IZQUIERDA) 
+                        self.mover(IZQUIERDA)
+                    else:
+                        #self.disparar(DERECHA)
+                        self.mover(DERECHA)
+            # Si este personaje no esta en pantalla, no hara nada
+            #else:
+             #   Personaje.mover(self,QUIETO)
+
+    def disparar(self,direccion):
+        p=Proyectil(direccion)
+        p.establecerPosicion((self.posicion[0],self.posicion[1]))
+        p.scroll=self.scroll 
+        self.grupoProyectilesEnemigo.add(p)
+        self.grupoDinam.add(p)
+        self.grupoSprites.add(p)
+
+    def setgrupoproyEnem(self,grupdinam,grupsprit):
+        self.grupoDinam=grupdinam
+        self.grupoSprites=grupsprit
+
 #--------------------------------------------------------------
 #Diferentes power ups
 
@@ -633,8 +693,19 @@ class powerupSpeed(PowerUp):
 class powerupBotiquin(PowerUp):
     "PowerUp para el personaje"
     def __init__(self):
+    	PowerUp.__init__(self)
         Personaje.__init__(self,'powerupBotiquin.png','coordSniper.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
     def efecto(self,jugador1):
         jugador1.vida=3
         return
 
+class hud (PowerUp):
+    def __init__(self):    
+        PowerUp.__init__(self)
+        Personaje.__init__(self,'corazon.png','coordSniper.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_SNIPER, RETARDO_ANIMACION_SNIPER);
+    def establecerPosicionPantalla(self, scrollDecorado):
+        self.scroll = scrollDecorado;
+        (scrollx, scrolly) = self.scroll;
+        (posx, posy) = self.posicion;
+        self.rect.left = posx ;
+        self.rect.bottom = posy ;

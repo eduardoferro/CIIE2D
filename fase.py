@@ -44,6 +44,8 @@ class Fase(Escena):
         self.grupoProyectilesEnemigo = pygame.sprite.Group()
         self.grupoPowerUps=pygame.sprite.Group()
         self.grupoFinFase=pygame.sprite.Group()
+        self.grupoHud=pygame.sprite.Group()
+        
         # Creamos los sprites de los jugadores
         self.grupoProyectiles = pygame.sprite.Group()
         self.jugador1 = Jugador(self.grupoProyectiles)
@@ -76,7 +78,9 @@ class Fase(Escena):
         self.grupoPlataformas.add(plat)
         self.grupoSprites.add(plat)
     #def setFondo(self,fondo):
-
+    def addHud(self,hud):
+        self.grupoSprites.add(hud)
+        self.grupoHud.add(hud)
     def addPowerUp(self,powerup):
         self.grupoSprites.add(powerup)
         self.grupoPowerUps.add(powerup)
@@ -237,14 +241,24 @@ class Fase(Escena):
                 cosa.vida-=1
                 cosa.recibir_dano()
                 if cosa.vida<0 :
-                    cosa.kill()
+                	cosa.sonidomuerte.play()
+                	cosa.kill()
         coll=pygame.sprite.groupcollide(self.grupoPowerUps, self.grupoJugadores, True, False)
         if coll!={}:
             for up in coll:
                 up.efecto(self.jugador1)
+                up.sonido.play()
         coll=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoFinFase, True, False)
         if coll!={}:
             self.director.salirEscena()
+        coll=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoProyectilesEnemigo, False, True)
+        if coll!={}:
+            lhud=self.grupoHud.sprites()
+            if len(lhud)==0:
+                #APILAR CONTINUE
+                self.director.salirEscena()
+            else:
+                lhud[len(lhud)-1].kill()
             # self.jugador2.vida-=1
             #if self.jugador2.vida<0 :
             #    return True
