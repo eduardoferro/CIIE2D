@@ -49,11 +49,11 @@ class textToFaseFactory():
 		for i in range(0,len(listaValores)):
 			subcachos=listaValores[i].split('-')
 			if (int(subcachos[0])==1):
-				enemigo1 = Sniper()
+				enemigo1 = Alien()
 			if (int(subcachos[0])==2):
 				enemigo1 = mob1()
 			if (int(subcachos[0])==3):
-				enemigo1 = Sniper_Dispara(self.nuevafase.grupoProyectilesEnemigo)
+				enemigo1 = Alien_Dispara(self.nuevafase.grupoProyectilesEnemigo)
 				enemigo1.setgrupoproyEnem(self.nuevafase.grupoSpritesDinamicos,self.nuevafase.grupoSprites)
 			if (int(subcachos[0])==4):
 				enemigo1 = Tirador_Arriba(self.nuevafase.grupoProyectilesEnemigo)
@@ -73,7 +73,7 @@ class textToFaseFactory():
 			if (int(subcachos[0])==1):
 				powerup1 = powerupSpeed()
 			if (int(subcachos[0])==2):
-				powerup1 = hud()
+				powerup1 = powerupBotiquin()
         	powerup1.establecerPosicion((int(subcachos[1]), int(subcachos[2])))
         	self.nuevafase.addPowerUp(powerup1)
 	def readHud(self,listaValores):
