@@ -15,7 +15,7 @@ from escena import *
 VELOCIDAD_SOL = 0.1 # Pixeles por milisegundo
 
 # Los bordes de la pantalla para hacer scroll horizontal
-MINIMO_X_JUGADOR = 1
+MINIMO_X_JUGADOR = 250
 MAXIMO_X_JUGADOR = ANCHO_PANTALLA - MINIMO_X_JUGADOR
 
 # -------------------------------------------------
@@ -34,7 +34,7 @@ class Fase(Escena):
         # De esta forma, se podrian tener muchas fases distintas con esta clase
         Escena.__init__(self, director)
         # Creamos el decorado y el fondo
-       
+        self.Bordes=MINIMO_X_JUGADOR
         self.fondo = Cielo()
         self.decorado=Decorado('decorado.png',1200,300,1)
         # Que parte del decorado estamos visualizando
@@ -76,6 +76,7 @@ class Fase(Escena):
         self.jugador1.setgrupproy(self.grupoSpritesDinamicos,self.grupoSprites)
     def setBordesPant(self,min):
     	global MINIMO_X_JUGADOR
+    	global MAXIMO_X_JUGADOR
     	MINIMO_X_JUGADOR=min
     	MAXIMO_X_JUGADOR = ANCHO_PANTALLA - MINIMO_X_JUGADOR
     def addPlataforma(self,plat):
@@ -106,6 +107,7 @@ class Fase(Escena):
 
     # Devuelve True o False según se ha tenido que desplazar el scroll
     def actualizarScrollOrdenados(self, jugador1):
+    	self.setBordesPant(self.Bordes)
         # Si ambos jugadores se han ido por ambos lados de los dos bordes
 #         if (jugadorIzq.rect.left<MINIMO_X_JUGADOR) and (jugadorDcha.rect.right>MAXIMO_X_JUGADOR):
 
