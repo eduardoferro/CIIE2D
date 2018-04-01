@@ -667,10 +667,10 @@ class Boss1(Alien):
                     self.delaydisp=(pygame.time.get_ticks())
                     jugadorMasCercano = jugador1
                     if jugadorMasCercano.posicion[0]<self.posicion[0]:
-                        #self.disparar(IZQUIERDA) 
+                        self.disparar(IZQUIERDA) 
                         self.mover(IZQUIERDA)
                     else:
-                        #self.disparar(DERECHA)
+                        self.disparar(DERECHA)
                         self.mover(DERECHA)
             # Si este personaje no esta en pantalla, no hara nada
             #else:
