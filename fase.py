@@ -14,7 +14,7 @@ from escena import *
 VELOCIDAD_SOL = 0.1 # Pixeles por milisegundo
 
 # Los bordes de la pantalla para hacer scroll horizontal
-MINIMO_X_JUGADOR = 150
+MINIMO_X_JUGADOR = 250
 MAXIMO_X_JUGADOR = ANCHO_PANTALLA - MINIMO_X_JUGADOR
 
 # -------------------------------------------------
@@ -237,12 +237,12 @@ class Fase(Escena):
             #return True
         coll=pygame.sprite.groupcollide(self.grupoEnemigos, self.grupoProyectiles, False, True)
         if coll!={}:
-            for cosa in coll:
-                cosa.vida-=1
-                cosa.recibir_dano()
-                if cosa.vida<0 :
-                	cosa.sonidomuerte.play()
-                	cosa.kill()
+            for elem in coll:
+                elem.vida-=1
+                elem.recibir_dano()
+                if elem.vida<0 :
+                	elem.sonidomuerte.play()
+                	elem.kill()
         coll=pygame.sprite.groupcollide(self.grupoPowerUps, self.grupoJugadores, True, False)
         if coll!={}:
             for up in coll:
