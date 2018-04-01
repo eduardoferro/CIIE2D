@@ -5,6 +5,7 @@ from personajes import *
 from pygame.locals import *
 from gestorRecursos import *
 from escena import *
+#from menu import Menu
 # -------------------------------------------------
 # -------------------------------------------------
 # Constantes
@@ -14,7 +15,7 @@ from escena import *
 VELOCIDAD_SOL = 0.1 # Pixeles por milisegundo
 
 # Los bordes de la pantalla para hacer scroll horizontal
-MINIMO_X_JUGADOR = 250
+MINIMO_X_JUGADOR = 1
 MAXIMO_X_JUGADOR = ANCHO_PANTALLA - MINIMO_X_JUGADOR
 
 # -------------------------------------------------
@@ -22,7 +23,6 @@ MAXIMO_X_JUGADOR = ANCHO_PANTALLA - MINIMO_X_JUGADOR
 
 class Fase(Escena):
     def __init__(self,director):
-
         # Habria que pasarle como parámetro el número de fase, a partir del cual se cargue
         #  un fichero donde este la configuracion de esa fase en concreto, con cosas como
         #   - Nombre del archivo con el decorado
@@ -74,6 +74,10 @@ class Fase(Escena):
         # Creamos otro grupo con todos los Sprites
         self.grupoSprites = pygame.sprite.Group( self.jugador1 )
         self.jugador1.setgrupproy(self.grupoSpritesDinamicos,self.grupoSprites)
+    def setBordesPant(self,min):
+    	global MINIMO_X_JUGADOR
+    	MINIMO_X_JUGADOR=min
+    	MAXIMO_X_JUGADOR = ANCHO_PANTALLA - MINIMO_X_JUGADOR
     def addPlataforma(self,plat):
         self.grupoPlataformas.add(plat)
         self.grupoSprites.add(plat)
@@ -179,6 +183,7 @@ class Fase(Escena):
         return False;
 
 
+
     def actualizarScroll(self, jugador1):
         # Se ordenan los jugadores según el eje x, y se mira si hay que actualizar el scroll
         #  if (jugador1.posicion[0]<jugador1.posicion[0]):
@@ -252,13 +257,27 @@ class Fase(Escena):
         if coll!={}:
             self.director.salirEscena()
         coll=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoProyectilesEnemigo, False, True)
+        #coll2=pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, True)
+        #if coll!={} or coll2!={}:
         if coll!={}:
-            lhud=self.grupoHud.sprites()
-            if len(lhud)==0:
-                #APILAR CONTINUE
-                self.director.salirEscena()
-            else:
-                lhud[len(lhud)-1].kill()
+            self.jugador1.vida-=1
+            if (self.jugador1.vida==0):
+            	#print 'e'
+            	#cont=MenuCont(self.director)
+            	self.director.salirPrograma()
+         
+        
+            	
+            
+        if(self.jugador1.vida!=len(self.grupoHud.sprites())):
+			lhud=self.grupoHud.sprites()
+			for numvida in range (0,len(lhud)):
+				lhud[numvida].kill()
+			for numvida in range (0,self.jugador1.vida):
+				nuevohud=hud()
+				nuevohud.establecerPosicion((numvida*50,50))
+				self.grupoHud.add(nuevohud)
+				self.grupoSprites.add(nuevohud) 
             # self.jugador2.vida-=1
             #if self.jugador2.vida<0 :
             #    return True

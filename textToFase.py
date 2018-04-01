@@ -29,6 +29,7 @@ class textToFaseFactory():
 			linea=f.readline()
 		return self.nuevafase
 	def readEndFase(self,listaValores):
+		self.nuevafase.setBordesPant(255)
 		final=EndFase()
 		final.establecerPosicion((int(listaValores[0]),int(listaValores[1])))
 		self.nuevafase.setFin(final)
@@ -64,6 +65,7 @@ class textToFaseFactory():
 			if (int(subcachos[0])==6):
 				enemigo1 = Boss1(self.nuevafase.grupoProyectilesEnemigo,self.nuevafase.director)
 				enemigo1.setgrupoproyEnem(self.nuevafase.grupoSpritesDinamicos,self.nuevafase.grupoSprites)
+				self.nuevafase.setBordesPant(1)
 			enemigo1.establecerPosicion((int(subcachos[1]),int( subcachos[2])))
 			self.nuevafase.addEnemigo(enemigo1)
 	def readObjetos(self,listaValores):

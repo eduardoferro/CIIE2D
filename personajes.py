@@ -275,13 +275,13 @@ class Jugador(Personaje):
         self.grupoProyectiles=grupoproy
         self.vida=3
         self.delaydisp=pygame.time.get_ticks()
-        self.sonidodisp=pygame.mixer.Sound('sonidos/escopeta.ogg')
+        self.sonidodisp=pygame.mixer.Sound('sonidos/disparoiago.ogg')
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha,disparo, disparoArriba):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
         if teclasPulsadas[disparo] or teclasPulsadas[disparoArriba]:
             if (pygame.time.get_ticks()-self.delaydisp)>300:
             	
-                self.sonidodisp.play(1)
+                self.sonidodisp.play(loops=1)
                 self.delaydisp=pygame.time.get_ticks()
                 if teclasPulsadas[disparo]:
                     p=Proyectil(self.direcbala)
@@ -644,8 +644,8 @@ class Boss1(Alien):
     "Jefe 'Alien'"
     def __init__(self,grupoproyEnem,director):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        NoJugador.__init__(self,'boss1.png','coordAlien.txt', [3, 3, 3], VELOCIDAD_ALIEN, VELOCIDAD_SALTO_ALIEN, RETARDO_ANIMACION_ALIEN);
-        self.vida=6
+        NoJugador.__init__(self,'boss1.png','coordboss1.txt', [3, 3, 3], VELOCIDAD_ALIEN*2, VELOCIDAD_SALTO_ALIEN, RETARDO_ANIMACION_ALIEN);
+        self.vida=15
         self.grupoProyectilesEnemigo=grupoproyEnem
         self.delaydisp=pygame.time.get_ticks()
         self.director=director
@@ -661,9 +661,9 @@ class Boss1(Alien):
             # Disparan solo los enemigos que esten en la pantalla
             #print(self.rect.left,self.rect.right,self.rect.bottom,self.rect.top)
             if self.rect.left>0 and self.rect.right<ANCHO_PANTALLA and self.rect.bottom>0 and self.rect.top<ALTO_PANTALLA:
-                if (pygame.time.get_ticks()-self.delaydisp)>600:
+                if (pygame.time.get_ticks()-self.delaydisp)>1000:
 				self.mover(QUIETO)
-                if (pygame.time.get_ticks()-self.delaydisp)>700:
+                if (pygame.time.get_ticks()-self.delaydisp)>1400:
                     self.delaydisp=(pygame.time.get_ticks())
                     jugadorMasCercano = jugador1
                     if jugadorMasCercano.posicion[0]<self.posicion[0]:
@@ -705,8 +705,8 @@ class powerupBotiquin(PowerUp):
     	PowerUp.__init__(self)
         Personaje.__init__(self,'powerupBotiquin.png','coordAlien.txt', [5, 10, 6], 0.3, VELOCIDAD_SALTO_ALIEN, RETARDO_ANIMACION_ALIEN);
         self.sonido=pygame.mixer.Sound('sonidos/Turururu.ogg')
-    def efecto(self,jugador1):
-        jugador1.vida=3
+    def efecto(self,jugador):
+        jugador.vida=3
         return
 
 class hud (PowerUp):
